@@ -189,7 +189,7 @@ class ShipGame:
 
 
 
-
+'''
 game = ShipGame()
 game.place_ship('first', 5, 'B2', 'C')
 #game.place_ship('first', 2, 'I8', 'R')
@@ -208,7 +208,7 @@ print(game.fire_torpedo('first', 'H2'))
 print(game.get_current_state())
 print(game.fire_torpedo('second', 'G1'))
 print(game.fire_torpedo('first', 'A10'))
-
+'''
 
 
 
