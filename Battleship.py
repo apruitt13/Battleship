@@ -17,6 +17,7 @@ class ShipGame:
         self._current_state = "UNFINISHED"
         self._torpedo_status = None
         self._winner = None
+        self._hit = None
 
     def place_ship(self, player, length, coord, orientation):
         """Method that takes the arguments the player, length of the ship, coordinates of the ship,
@@ -70,7 +71,7 @@ class ShipGame:
                 num = coord[1]                              # Setting the number.
                 new_ship = []                               # An empty list that represents the ship.
                 pos_alpha = self._letters.index(coord[0])   # Finding the index of the number for the starting point.
-                if pos_alpha + length > 10:  # Checks to see if the next coord is off the board.
+                if pos_alpha + length > 10:                 # Checks to see if the next coord is off the board.
                     return False
                 while length > 0:                           # Continue adding a new coord while the length is >0.
                     new_ship.append(self._letters[pos_alpha] + num)       # Add the coord to the empty list.
@@ -116,15 +117,15 @@ class ShipGame:
         """ Purpose: A method that will "fire" a torpedo from one player to the other. It will record the
         move, update who's turn it is, and update the current state of the game. """
         empty_list = []                                                 # A variable for an empty list.
-
+        self._hit = "Miss"
         if player == "first" and self._player == "second":              # Making sure it's the correct players turn.
-            return False
+            return "It is not your turn."
 
         if player == "second" and self._player == "first":              # Making sure it's the correct players turn.
-            return False
+            return "It is not your turn."
 
         if self._current_state == "FIRST_WON" or self._current_state == "SECOND_WON":   # Can't fire if a player won.
-            return False
+            return "There is already a winner."
 
         if player == "first":                                       # First player's move.
             position = 0
@@ -135,6 +136,8 @@ class ShipGame:
                         self._player_two_ships[inside_list].remove(coord)   # Removes the coord. If it's hit.
                     if len(self._player_two_ships[inside_list]) == 0:
                         self._player_two_ships.remove(empty_list)           # Removes an empty list if no more coord.
+                    if place == coord:
+                        self._hit = "Hit"
                 inside_list += 1                                            # Next item in nested list.
                 position += 1                                               # Next nested list.
 
@@ -147,7 +150,7 @@ class ShipGame:
             if len(self._player_one_ships) > 0 and len(self._player_two_ships) == 0:    # First player won.
                 self._current_state = "FIRST_WON"
             self._player = "second"                                                     # Setting the next player.
-            return True
+            return self._hit
 
         if player == "second":                                      # Second player's move.
             position = 0
@@ -158,6 +161,8 @@ class ShipGame:
                         self._player_one_ships[inside_list].remove(coord)   # Removes the coord. If it's hit.
                     if len(self._player_one_ships[inside_list]) == 0:
                         self._player_one_ships.remove(empty_list)           # Removes an empty list if no more coord.
+                    if place == coord:
+                        self._hit = "Hit"
                 inside_list += 1                                            # Next item in nested list.
                 position += 1                                               # Next nested list.
 
@@ -170,7 +175,7 @@ class ShipGame:
             if len(self._player_one_ships) > 0 and len(self._player_two_ships) == 0:    # First player won.
                 self._current_state = "FIRST_WON"
             self._player = "first"
-            return True
+            return self._hit
 
     def get_num_ships_remaining(self, player):
         """To return the number of ships remaining for the player indicated. """
@@ -189,27 +194,25 @@ class ShipGame:
 
 
 
-'''
+
 game = ShipGame()
 game.place_ship('first', 5, 'B2', 'C')
-#game.place_ship('first', 2, 'I8', 'R')
+game.place_ship('second', 2, 'I8', 'R')
 
 print(game.get_player_one_ships())
 print(game.get_player_two_ships())
-print(game.fire_torpedo('first', 'I2'))
+print(game.fire_torpedo('first', 'I8'))
 print(game.get_num_ships_remaining("first"))
 print(game.get_num_ships_remaining("second"))
 
 print(game.fire_torpedo('second', 'A1'))
-print(game.fire_torpedo('first', 'H2'))
+print(game.fire_torpedo('first', 'I9'))
 
 
 
 print(game.get_current_state())
 print(game.fire_torpedo('second', 'G1'))
 print(game.fire_torpedo('first', 'A10'))
-'''
-
 
 
 '''
@@ -221,22 +224,3 @@ print(game.place_ship("first", 4, "B4", "C"))
 print(game.get_num_ships_remaining("first"))
 print(game.get_player_one_ships())
 '''
-"""
-Idea for checking if a coord is already in a list:
-ship = [['B4', 'B5', 'B6', 'B7', 'B8'], ['F4', 'G4', 'H4', 'I4']]
-#ship[0].remove('1B')
-print(ship)
-coord = "A5"
-pos_num = int(coord[1])
-#print(pos_num)
-print(len(ship[0]))
-position = 0
-inside_list = 0
-while position <= len(ship) - 1:
-    for coord in ship[inside_list]:
-        if coord == 'B7':
-            print("yes")
-        inside_list += 1
-    inside_list += 1
-    position += 1
-"""
